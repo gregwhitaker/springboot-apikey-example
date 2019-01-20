@@ -1,5 +1,10 @@
 # springboot-apikey-example
 
+An example of authenticating with a Spring Boot application using an API key.
+
+## Bugs and Feedback
+For bugs, questions, and discussions please use the [Github Issues](https://github.com/gregwhitaker/springboot-apikey-example/issues).
+
 ## License
 Copyright 2019 Greg Whitaker
 
