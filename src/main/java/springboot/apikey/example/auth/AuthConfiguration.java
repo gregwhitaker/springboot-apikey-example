@@ -16,32 +16,19 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 public class AuthConfiguration extends WebSecurityConfigurerAdapter {
     private static final String API_KEY_AUTH_HEADER_NAME = "API_KEY";
 
-    @Autowired
-    private ApiKeyAuthFilter apiKeyAuthFilter;
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+        ApiKeyAuthFilter filter = new ApiKeyAuthFilter(API_KEY_AUTH_HEADER_NAME);
+        filter.setAuthenticationManager(new ApiKeyAuthManager());
+
         http.antMatcher("/api/**").
                 csrf().
                 disable().
                 sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).
                 and()
-                    .addFilter(apiKeyAuthFilter)
+                    .addFilter(filter)
                     .authorizeRequests()
                     .anyRequest()
                     .authenticated();
-    }
-
-    @Bean
-    public ApiKeyAuthFilter apiKeyAuthFilter(AuthenticationManager authenticationManager) {
-        ApiKeyAuthFilter filter = new ApiKeyAuthFilter(API_KEY_AUTH_HEADER_NAME);
-        filter.setAuthenticationManager(authenticationManager);
-
-        return filter;
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager() {
-        return new ApiKeyAuthManager();
     }
 }

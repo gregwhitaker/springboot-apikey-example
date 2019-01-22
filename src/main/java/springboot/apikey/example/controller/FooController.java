@@ -6,11 +6,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController("/api/v1")
+@RestController
 public class FooController {
     private static final Logger LOG = LoggerFactory.getLogger(FooController.class);
 
-    @GetMapping("/foobar")
+    @GetMapping(value = "/api/v1/foobar")
     public ResponseEntity foobar() {
         return ResponseEntity.ok().build();
     }
