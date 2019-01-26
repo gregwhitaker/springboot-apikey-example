@@ -16,6 +16,24 @@ Follow the steps below to run the example:
 2. Run the following command to start the example application:
 
         ./gradlew bootRun
+        
+3. Run the following command to send a request to the non-secure endpoint:
+
+        curl -v http://localhost:8080/api/v1/nonsecure
+        
+    If successful, you will receive an `HTTP 200 OK` response.
+    
+4. Run the following command to send a request to the secure endpoint:
+
+        curl -v http://localhost:8080/api/v1/secure
+        
+    You will receive an `HTTP 403 Forbidden` response because you have not supplied a valid API key.
+    
+5. Run the following command to send a request to the secure endpoint with an API key:
+
+        curl -v --header "API_KEY: aec093c2c98144f99a4a365ad1d2f05e" http://localhost:8080/api/v1/secure
+        
+    If successful, you will now receive an `HTTP 200 OK` response because you have supplied a valid API key.
 
 ## Bugs and Feedback
 For bugs, questions, and discussions please use the [Github Issues](https://github.com/gregwhitaker/springboot-apikey-example/issues).
