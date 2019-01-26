@@ -2,6 +2,15 @@
 
 An example of authenticating with a Spring Boot application using an API key.
 
+## Prerequisites
+
+## Running the Example
+Follow the steps below to run the example:
+
+1. Run the following command to start the example application:
+
+        ./gradlew bootRun
+
 ## Bugs and Feedback
 For bugs, questions, and discussions please use the [Github Issues](https://github.com/gregwhitaker/springboot-apikey-example/issues).
 
