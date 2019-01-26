@@ -30,9 +30,11 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Handles authenticating api keys against the database.
+ */
 public class ApiKeyAuthManager implements AuthenticationManager {
     private static final Logger LOG = LoggerFactory.getLogger(ApiKeyAuthManager.class);
 
@@ -76,8 +78,10 @@ public class ApiKeyAuthManager implements AuthenticationManager {
 
                     try (ResultSet rs = ps.executeQuery()) {
                         if (rs.next()) {
+                            // Valid API Key
                             return true;
                         } else {
+                            // Invalid API Key
                             return false;
                         }
                     }
