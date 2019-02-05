@@ -1,4 +1,5 @@
 # springboot-apikey-example
+[![Build Status](https://travis-ci.org/gregwhitaker/springboot-apikey-example.svg?branch=master)](https://travis-ci.org/gregwhitaker/springboot-apikey-example)
 
 An example of authenticating with a Spring Boot application using an API key.
 
