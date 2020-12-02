@@ -30,13 +30,6 @@ dependencies {
     runtime 'org.postgresql:postgresql'
 }
 
-
-
-// Spring Boot
-bootJar {
-    mainClassName = 'dmv.server.DmvServerApplication'
-}
-
 // Database
 flyway {
     url = 'jdbc:postgresql://localhost:5432/postgres'
