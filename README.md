@@ -1,4 +1,6 @@
 # springboot-apikey-example
+![Build](https://github.com/gregwhitaker/springboot-apikey-example/workflows/Build/badge.svg)
+
 An example of authenticating with a Spring Boot application using an API key.
 
 If you are looking for an example using WebFlux, please check out [springboot-webflux-apikey-example](https://github.com/gregwhitaker/springboot-webflux-apikey-example).
