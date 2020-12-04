@@ -1,7 +1,7 @@
 # springboot-apikey-example
-[![Build Status](https://travis-ci.org/gregwhitaker/springboot-apikey-example.svg?branch=master)](https://travis-ci.org/gregwhitaker/springboot-apikey-example)
-
 An example of authenticating with a Spring Boot application using an API key.
+
+If you are looking for this example using WebFlux, check out [springboot-webflux-apikey-example](https://github.com/gregwhitaker/springboot-webflux-apikey-example).
 
 ## Prerequisites
 This example requires that you have a running [PostgreSQL](https://www.postgresql.org/) database. You can start one as a Docker container using the following commands:
