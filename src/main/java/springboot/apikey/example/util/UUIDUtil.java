@@ -46,7 +46,7 @@ public final class UUIDUtil {
      * Gets the hex representation of the supplied {@link UUID}
      *
      * @param uuid uuid to convert to hex
-     * @return hex representation of the uuid
+     * @return lowercase 32-character hex representation of the uuid without hyphens
      */
     public static String toHex(UUID uuid) {
         ByteBuffer bytes = ByteBuffer.wrap(new byte[16]);
