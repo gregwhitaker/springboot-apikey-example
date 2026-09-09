@@ -27,6 +27,8 @@ dependencies {
     implementation 'com.github.ben-manes.caffeine:caffeine:2.6.2'
     implementation 'commons-codec:commons-codec:1.11'
 
+    testImplementation 'junit:junit:4.13.2'
+
     runtime 'org.postgresql:postgresql'
 }
 
