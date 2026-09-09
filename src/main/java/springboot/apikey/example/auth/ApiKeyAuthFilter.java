@@ -30,6 +30,10 @@ public class ApiKeyAuthFilter extends AbstractPreAuthenticatedProcessingFilter {
     private final String headerName;
 
     public ApiKeyAuthFilter(final String headerName) {
+        if (headerName == null || headerName.trim().isEmpty()) {
+            throw new IllegalArgumentException("API key header name must not be null or blank");
+        }
+
         this.headerName = headerName;
     }
 
