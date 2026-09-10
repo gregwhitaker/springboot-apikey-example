@@ -57,6 +57,21 @@ public class ApiKeyAuthManagerTest {
         assertRejected(authenticationWithPrincipal(" \t\n"));
     }
 
+    @Test
+    public void rejects31CharacterApiKeyBeforeDatabaseAccess() {
+        assertRejected(authenticationWithPrincipal("0123456789abcdef0123456789abcde"));
+    }
+
+    @Test
+    public void rejects33CharacterApiKeyBeforeDatabaseAccess() {
+        assertRejected(authenticationWithPrincipal("0123456789abcdef0123456789abcdef0"));
+    }
+
+    @Test
+    public void rejectsNonHexApiKeyBeforeDatabaseAccess() {
+        assertRejected(authenticationWithPrincipal("0123456789abcdef0123456789abcdeg"));
+    }
+
     private void assertRejected(Authentication authentication) {
         ApiKeyAuthManager manager = new ApiKeyAuthManager(untouchedDataSource);
 

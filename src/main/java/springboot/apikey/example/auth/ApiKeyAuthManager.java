@@ -56,6 +56,10 @@ public class ApiKeyAuthManager implements AuthenticationManager {
 
         String apiKey = (String) principal;
 
+        if (!apiKey.matches("[0-9a-fA-F]{32}")) {
+            throw new BadCredentialsException("The API key was not found or not the expected value.");
+        }
+
         if (!keys.get(apiKey)) {
             throw new BadCredentialsException("The API key was not found or not the expected value.");
         } else {
