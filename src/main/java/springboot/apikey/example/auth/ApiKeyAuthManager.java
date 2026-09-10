@@ -48,9 +48,15 @@ public class ApiKeyAuthManager implements AuthenticationManager {
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        String principal = (String) authentication.getPrincipal();
+        Object principal = authentication == null ? null : authentication.getPrincipal();
 
-        if (!keys.get(principal)) {
+        if (!(principal instanceof String) || ((String) principal).trim().isEmpty()) {
+            throw new BadCredentialsException("The API key was not found or not the expected value.");
+        }
+
+        String apiKey = (String) principal;
+
+        if (!keys.get(apiKey)) {
             throw new BadCredentialsException("The API key was not found or not the expected value.");
         } else {
             authentication.setAuthenticated(true);
