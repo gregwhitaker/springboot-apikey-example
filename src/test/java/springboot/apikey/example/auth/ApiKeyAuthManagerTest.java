@@ -21,7 +21,14 @@ import org.springframework.security.core.Authentication;
 
 import javax.sql.DataSource;
 import java.lang.reflect.Proxy;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.UUID;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class ApiKeyAuthManagerTest {
@@ -55,6 +62,102 @@ public class ApiKeyAuthManagerTest {
     @Test
     public void rejectsWhitespaceOnlyApiKeyBeforeDatabaseAccess() {
         assertRejected(authenticationWithPrincipal(" \t\n"));
+    }
+
+    @Test
+    public void authenticatesValidHexApiKeyAndReusesCachedDatabaseLookup() {
+        String apiKey = "00112233445566778899aabbccddeeff";
+        UUID expectedUuid = UUID.fromString("00112233-4455-6677-8899-aabbccddeeff");
+        int[] databaseLookups = {0};
+        Object[] jdbcParameter = {null};
+        boolean[] connectionClosed = {false};
+        boolean[] statementClosed = {false};
+        boolean[] resultSetClosed = {false};
+
+        ResultSet resultSet = (ResultSet) Proxy.newProxyInstance(
+                ResultSet.class.getClassLoader(),
+                new Class<?>[]{ResultSet.class},
+                (proxy, method, args) -> {
+                    if ("next".equals(method.getName())) {
+                        return true;
+                    }
+                    if ("close".equals(method.getName())) {
+                        resultSetClosed[0] = true;
+                        return null;
+                    }
+                    throw new AssertionError("Unexpected ResultSet method: " + method.getName());
+                });
+        PreparedStatement statement = (PreparedStatement) Proxy.newProxyInstance(
+                PreparedStatement.class.getClassLoader(),
+                new Class<?>[]{PreparedStatement.class},
+                (proxy, method, args) -> {
+                    if ("setObject".equals(method.getName())) {
+                        assertEquals(1, args[0]);
+                        jdbcParameter[0] = args[1];
+                        return null;
+                    }
+                    if ("executeQuery".equals(method.getName())) {
+                        return resultSet;
+                    }
+                    if ("close".equals(method.getName())) {
+                        statementClosed[0] = true;
+                        return null;
+                    }
+                    throw new AssertionError("Unexpected PreparedStatement method: " + method.getName());
+                });
+        Connection connection = (Connection) Proxy.newProxyInstance(
+                Connection.class.getClassLoader(),
+                new Class<?>[]{Connection.class},
+                (proxy, method, args) -> {
+                    if ("prepareStatement".equals(method.getName())) {
+                        assertEquals("SELECT * FROM auth WHERE api_key = ?", args[0]);
+                        return statement;
+                    }
+                    if ("close".equals(method.getName())) {
+                        connectionClosed[0] = true;
+                        return null;
+                    }
+                    throw new AssertionError("Unexpected Connection method: " + method.getName());
+                });
+        DataSource dataSource = (DataSource) Proxy.newProxyInstance(
+                DataSource.class.getClassLoader(),
+                new Class<?>[]{DataSource.class},
+                (proxy, method, args) -> {
+                    if ("getConnection".equals(method.getName())) {
+                        databaseLookups[0]++;
+                        return connection;
+                    }
+                    throw new AssertionError("Unexpected DataSource method: " + method.getName());
+                });
+        boolean[] authenticated = {false};
+        Authentication authentication = (Authentication) Proxy.newProxyInstance(
+                Authentication.class.getClassLoader(),
+                new Class<?>[]{Authentication.class},
+                (proxy, method, args) -> {
+                    if ("getPrincipal".equals(method.getName())) {
+                        return apiKey;
+                    }
+                    if ("setAuthenticated".equals(method.getName())) {
+                        authenticated[0] = (Boolean) args[0];
+                        return null;
+                    }
+                    if ("isAuthenticated".equals(method.getName())) {
+                        return authenticated[0];
+                    }
+                    throw new AssertionError("Unexpected Authentication method: " + method.getName());
+                });
+
+        ApiKeyAuthManager manager = new ApiKeyAuthManager(dataSource);
+
+        assertSame(authentication, manager.authenticate(authentication));
+        assertSame(authentication, manager.authenticate(authentication));
+
+        assertTrue(authentication.isAuthenticated());
+        assertEquals(expectedUuid, jdbcParameter[0]);
+        assertEquals(1, databaseLookups[0]);
+        assertTrue(resultSetClosed[0]);
+        assertTrue(statementClosed[0]);
+        assertTrue(connectionClosed[0]);
     }
 
     private void assertRejected(Authentication authentication) {
