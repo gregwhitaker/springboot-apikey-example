@@ -72,6 +72,16 @@ public class ApiKeyAuthManagerTest {
         assertRejected(authenticationWithPrincipal("0123456789abcdef0123456789abcdeg"));
     }
 
+    @Test
+    public void rejectsHyphenatedUuidBeforeDatabaseAccess() {
+        assertRejected(authenticationWithPrincipal("01234567-89ab-cdef-0123-456789abcdef"));
+    }
+
+    @Test
+    public void rejectsApiKeySurroundedByWhitespaceBeforeDatabaseAccess() {
+        assertRejected(authenticationWithPrincipal(" 0123456789abcdef0123456789abcdef "));
+    }
+
     private void assertRejected(Authentication authentication) {
         ApiKeyAuthManager manager = new ApiKeyAuthManager(untouchedDataSource);
 
