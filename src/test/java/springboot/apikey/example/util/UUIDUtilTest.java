@@ -42,6 +42,21 @@ public class UUIDUtilTest {
         assertEquals(UUID.fromString("01234567-89ab-cdef-fedc-ba9876543210"), uuid);
     }
 
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void fromHexRejectsOverlongInput() throws Exception {
+        UUIDUtil.fromHex("0123456789abcdef0123456789abcdef00");
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void fromHexRejectsShortEvenLengthInput() throws Exception {
+        UUIDUtil.fromHex("0123456789abcdef0123456789abcd");
+    }
+
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void fromHexRejectsEmptyInput() throws Exception {
+        UUIDUtil.fromHex("");
+    }
+
     @Test
     public void toHexReturnsLowercase32CharacterOutput() {
         String hex = UUIDUtil.toHex(UUID.fromString("ABCDEF01-2345-6789-ABCD-EF0123456789"));
