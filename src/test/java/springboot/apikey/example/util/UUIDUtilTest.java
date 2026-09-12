@@ -15,6 +15,7 @@
  */
 package springboot.apikey.example.util;
 
+import org.apache.commons.codec.DecoderException;
 import org.junit.Test;
 
 import java.util.UUID;
@@ -40,6 +41,16 @@ public class UUIDUtilTest {
         UUID uuid = UUIDUtil.fromHex("0123456789aBcDeFfEdCbA9876543210");
 
         assertEquals(UUID.fromString("01234567-89ab-cdef-fedc-ba9876543210"), uuid);
+    }
+
+    @Test(expected = DecoderException.class)
+    public void fromHexRejectsOddLengthInput() throws Exception {
+        UUIDUtil.fromHex("0123456789abcdef0123456789abcde");
+    }
+
+    @Test(expected = DecoderException.class)
+    public void fromHexRejectsNonHexCharacter() throws Exception {
+        UUIDUtil.fromHex("0123456789abcdef0123456789abcdeg");
     }
 
     @Test(expected = IndexOutOfBoundsException.class)
