@@ -39,6 +39,9 @@ public final class UUIDUtil {
      */
     public static UUID fromHex(String uuid) throws Exception {
         byte[] data = Hex.decodeHex(uuid.toCharArray());
+        if (data.length != 16) {
+            throw new IndexOutOfBoundsException("UUID must decode to exactly 16 bytes");
+        }
         return new UUID(ByteBuffer.wrap(data, 0, 8).getLong(), ByteBuffer.wrap(data, 8, 8).getLong());
     }
 
