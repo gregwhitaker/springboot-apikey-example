@@ -11,6 +11,11 @@ This example requires that you have a running [PostgreSQL](https://www.postgresq
     $ docker pull postgres
     $ docker run -p 5432:5432 postgres
 
+## Running tests
+The project requires Java 8. Run the test suite with the Gradle wrapper:
+
+    ./gradlew test
+
 ## Running the Example
 Follow the steps below to run the example:
 
